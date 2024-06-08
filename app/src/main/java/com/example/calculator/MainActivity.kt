@@ -1,5 +1,6 @@
 package com.example.calculator
 
+import android.app.Activity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -8,60 +9,64 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.calculator.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-    lateinit var etNum1:EditText
-    lateinit var etNum2:EditText
-    lateinit var btnAdd:Button
-    lateinit var btnSubtract:Button
-    lateinit var btnMultiply:Button
-    lateinit var btnDivide:Button
-    lateinit var tvResult:TextView
+    lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
+       binding=ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        castViews()
-        btnAdd.setOnClickListener{
-            val num1=etNum1.text.toString().toInt()
-            val num2=etNum2.text.toString().toInt()
-            val sum = num1+num2
-            tvResult.text=sum.toString()
+        binding.btnAdd.setOnClickListener {
+             validate("+")
         }
 
-        btnSubtract.setOnClickListener{
-            val num1=etNum1.text.toString().toInt()
-            val num2=etNum2.text.toString().toInt()
-            val subtract=num1-num2
-            tvResult.text=subtract.toString()
+        binding.btnSubtract.setOnClickListener {
+            validate("-")
         }
 
 
-        btnMultiply.setOnClickListener{
-            val num1=etNum1.text.toString().toInt()
-            val num2=etNum2.text.toString().toInt()
-            val multiply=num1*num2
-            tvResult.text=multiply.toString()
+        binding.btnMultiply.setOnClickListener {
+            validate("*")
         }
 
 
-        btnDivide.setOnClickListener{
-            val num1=etNum1.text.toString().toInt()
-            val num2=etNum2.text.toString().toInt()
-            val divide=num1/num2
-            tvResult.text=divide.toString()
+        binding.btnDivide.setOnClickListener {
+              validate("/")
         }
     }
-        fun castViews(){
-            etNum1=findViewById(R.id.etNum1)
-            etNum2=findViewById(R.id.etNum2)
-            btnAdd=findViewById(R.id.btnAdd)
-            btnSubtract=findViewById(R.id.btnSubtract)
-            btnMultiply=findViewById(R.id.btnMultiply)
-            btnDivide=findViewById(R.id.btnDivide)
-            tvResult=findViewById(R.id.tvResult)
+
+    fun validate(symbol:String){
+        val etNum1=binding.etNum1.text.toString()
+        val etNum2=binding.etNum2.text.toString()
+       var inputError=false
+        if(etNum1.isBlank()){
+            inputError=true
+            binding.etNum1.error="Number1 is required"
         }
+
+        if(etNum2.isBlank()){
+            inputError=true
+            binding.etNum2.error="Number2 is required"
+        }
+        if(!inputError){
+            calculate(etNum1.toDouble(),etNum2.toDouble(),symbol)
+        }
+    }
+
+    fun calculate(num1:Double,num2:Double,symbol: String){
+        var result=0.0
+        when(symbol){
+            "+"->result=num1+num2
+            "-"->result=num1-num2
+            "*"->result=num1*num2
+            "/"->result=num1/num2
+        }
+        binding.tvResult.text=result.toString()
+    }
+
+
 
 }
